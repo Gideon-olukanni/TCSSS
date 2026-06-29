@@ -7,7 +7,7 @@
 // 1. Core Firebase SDK imports
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
 import {
-  getFirestore,
+  initializeFirestore,
   collection,
   addDoc,
   getDocs,
@@ -35,9 +35,14 @@ const firebaseConfig = {
   messagingSenderId: "382886279978",
   appId: "1:382886279978:web:eb292fba262c03deb23c53"
 };
-// 3. Initialize once
+// 3. Initialize once.
+// experimentalAutoDetectLongPolling: some mobile carriers and networks block
+// Firestore's default streaming connection, which surfaces as a confusing
+// "client is offline" error even though everything else is set up correctly.
+// This setting detects that case and automatically switches to a more
+// compatible connection method instead.
 const app = initializeApp(firebaseConfig);
-const db = getFirestore(app);
+const db = initializeFirestore(app, { experimentalAutoDetectLongPolling: true });
 const auth = getAuth(app);
 
 // 4. Export everything the rest of the site needs
