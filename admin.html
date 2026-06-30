@@ -323,11 +323,13 @@ main.content{ max-width:920px; margin:0 auto; padding:36px 24px 80px; }
      from Gideon's other working project.
      ============================================================ -->
 <script type="module">
+<script type="module">
 import {
   db, auth,
   collection, addDoc, getDocs, getDoc, setDoc, updateDoc, deleteDoc, doc, query, orderBy,
   onAuthStateChanged, signInWithEmailAndPassword, signOut
-} from "./firebase-config.js";
+} from "./firebase-config.js?v=2"; // <--- ADDED ?v=2 HERE
+   
 
 // ---------- small helpers ----------
 function $(sel) { return document.querySelector(sel); }
