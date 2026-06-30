@@ -5,9 +5,9 @@
 // ============================================================
 
 // 1. Core Firebase SDK imports
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+import { initializeApp } from "https://www.gstatic.com/firebasejs/12.15.0/firebase-app.js";
 import {
-  getFirestore, // Replaced initializeFirestore with getFirestore
+  initializeFirestore,
   collection,
   addDoc,
   getDocs,
@@ -18,13 +18,13 @@ import {
   getDoc,
   updateDoc,
   deleteDoc
-} from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+} from "https://www.gstatic.com/firebasejs/12.15.0/firebase-firestore.js";
 import {
   getAuth,
   onAuthStateChanged,
   signInWithEmailAndPassword,
   signOut
-} from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+} from "https://www.gstatic.com/firebasejs/12.15.0/firebase-auth.js";
 
 // 2. Your unique web credentials.
 const firebaseConfig = {
@@ -36,10 +36,18 @@ const firebaseConfig = {
 };
 
 // 3. Initialize once.
+// experimentalForceLongPolling + useFetchStreams:false: some mobile
+// browsers and carriers quietly proxy or compress traffic in a way that
+// breaks Firestore's default streaming connection — this surfaces as a
+// confusing "client is offline" error even though everything else (the
+// config, the database, the rules) is completely correct. Forcing long
+// polling skips the streaming connection entirely in favor of plain
+// HTTP requests, which routes around that kind of interference.
 const app = initializeApp(firebaseConfig);
-
-// The standard, reliable initialization method in v10
-const db = getFirestore(app); 
+const db = initializeFirestore(app, {
+  experimentalForceLongPolling: true,
+  useFetchStreams: false
+});
 const auth = getAuth(app);
 
 // 4. Export everything the rest of the site needs
