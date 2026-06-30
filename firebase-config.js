@@ -28,12 +28,15 @@ import {
 
 // 2. Your unique web credentials — paste your real values here.
 // See FIREBASE_SETUP.md, Step 5, for exactly where to get these.
+// For Firebase JS SDK v7.20.0 and later, measurementId is optional
 const firebaseConfig = {
   apiKey: "AIzaSyA-46PKat5Z17JUIM94ttRRjryU9kr9qOU",
   authDomain: "tomia-css-website.firebaseapp.com",
   projectId: "tomia-css-website",
+  storageBucket: "tomia-css-website.firebasestorage.app",
   messagingSenderId: "382886279978",
-  appId: "1:382886279978:web:eb292fba262c03deb23c53"
+  appId: "1:382886279978:web:eb292fba262c03deb23c53",
+  measurementId: "G-40SPNG5KKG"
 };
 // 3. Initialize once.
 // experimentalAutoDetectLongPolling: some mobile carriers and networks block
