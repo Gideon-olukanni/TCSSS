@@ -13,7 +13,9 @@ import {
   setDoc,
   updateDoc,
   deleteDoc,
-  doc
+  doc,
+  query,
+  orderBy
 } from "https://www.gstatic.com/firebasejs/12.15.0/firebase-firestore.js";
 import {
   getAuth,
@@ -48,7 +50,10 @@ export {
   updateDoc,
   deleteDoc,
   doc,
+  query,
+  orderBy,
   onAuthStateChanged,
   signInWithEmailAndPassword,
   signOut
 };
+  
