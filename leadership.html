@@ -672,6 +672,23 @@ function setSeal(id, name, photoUrl) {
   }
 }
 
+const COUNCIL_ROLES = [
+  "Senior Prefect (Boy)", "Senior Prefect (Girl)",
+  "Assistant Senior Prefect Boy", "Assistant Senior Prefect Girl",
+  "Labour Prefect Boy", "Labour Prefect Girl",
+  "Laboratory Prefect Boy", "Laboratory Prefect Girl",
+  "Health Prefect Boy", "Health Prefect Girl",
+  "Sport Prefect Boy", "Sport Prefect Girl",
+  "Library Prefect Boy", "Library Prefect Girl",
+  "Social Prefect Boy", "Social Prefect Girl",
+  "Food Prefect Boy", "Food Prefect Girl",
+  "Muslim Assembly Prefect Boy", "Muslim Assembly Prefect Girl",
+  "Christian Assembly Prefect Boy", "Christian Assembly Prefect Girl",
+  "Punctuality Prefect Boy", "Punctuality Prefect Girl",
+  "Time Keeper Boy", "Time Keeper Girl",
+  "Other"
+];
+
 const leadershipPromise = getDoc(doc(db, 'leadershipMessages', 'main')).catch(() => null);
 const principalsPromise = getDocs(query(collection(db, 'principals'), orderBy('yearStarted', 'desc'))).catch(() => null);
 const councilPromise = getDocs(query(collection(db, 'executiveCouncil'), orderBy('academicYear', 'desc'))).catch(() => null);
@@ -679,10 +696,11 @@ const councilPromise = getDocs(query(collection(db, 'executiveCouncil'), orderBy
 Promise.all([leadershipPromise, principalsPromise, councilPromise]).then(([leadershipSnap, principalsSnap, councilSnap]) => {
   const principalsList = (principalsSnap && !principalsSnap.empty) ? principalsSnap.docs.map(d => d.data()) : [];
   const councilList = (councilSnap && !councilSnap.empty) ? councilSnap.docs.map(d => d.data()) : [];
-  const currentPrincipal = principalsList.find(p => p.isCurrent);
-  const spBoyCouncil = councilList.find(d => d.role === 'Senior Prefect (Boy)');
-  const spGirlCouncil = councilList.find(d => d.role === 'Senior Prefect (Girl)');
-
+const latestCouncilYear = councilList[0] && councilList[0].academicYear;
+  const currentCouncil = latestCouncilYear ? councilList.filter(d => d.academicYear === latestCouncilYear) : councilList;
+  const currentPrincipal = principalsList.find(p => p.isCurrent && p.photoUrl) || principalsList.find(p => p.isCurrent);
+  const spBoyCouncil = currentCouncil.find(d => d.role === 'Senior Prefect (Boy)' && d.photoUrl) || currentCouncil.find(d => d.role === 'Senior Prefect (Boy)');
+  const spGirlCouncil = currentCouncil.find(d => d.role === 'Senior Prefect (Girl)' && d.photoUrl) || currentCouncil.find(d => d.role === 'Senior Prefect (Girl)');
   // ---------- 1. Leadership Messages ----------
   if (leadershipSnap && leadershipSnap.exists()) {
     const d = leadershipSnap.data();
@@ -727,11 +745,19 @@ Promise.all([leadershipPromise, principalsPromise, councilPromise]).then(([leade
   }
 
   // ---------- 3. Executive Council (excluding Senior Prefect roles) ----------
-  if (councilList.length) {
-    if (councilList[0] && councilList[0].academicYear) {
-      document.getElementById('councilYearChip').textContent = councilList[0].academicYear + ' Student Executive Council';
+if (currentCouncil.length) {
+    if (latestCouncilYear) {
+      document.getElementById('councilYearChip').textContent = latestCouncilYear + ' Student Executive Council';
     }
-    const others = councilList.filter(d => d.role !== 'Senior Prefect (Boy)' && d.role !== 'Senior Prefect (Girl)');
+    const others = currentCouncil.filter(d => d.role !== 'Senior Prefect (Boy)' && d.role !== 'Senior Prefect (Girl)');
+    others.sort((a, b) => {
+      const aRank = COUNCIL_ROLES.indexOf(a.role);
+      const bRank = COUNCIL_ROLES.indexOf(b.role);
+      const ai = aRank === -1 ? COUNCIL_ROLES.length : aRank;
+      const bi = bRank === -1 ? COUNCIL_ROLES.length : bRank;
+      if (ai !== bi) return ai - bi;
+      return String(a.name || '').localeCompare(String(b.name || ''));
+    });
     if (others.length) {
       document.getElementById('councilGridContainer').innerHTML = others.map(d => `
         <div class="card council-card reveal in">
