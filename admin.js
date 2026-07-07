@@ -441,7 +441,16 @@ async function saveNews(event) {
 async function loadCouncil() {
   const snapshot = await withTimeout(getDocs(collectionRef(COLLECTIONS.council)), 12000, "Executive council load");
   const items = snapshot.docs.map((docSnap) => ({ id: docSnap.id, ...docSnap.data() }));
-  items.sort((a, b) => String(b.academicYear || "").localeCompare(String(a.academicYear || "")));
+  items.sort((a, b) => {
+    const yearCompare = String(b.academicYear || "").localeCompare(String(a.academicYear || ""));
+    if (yearCompare !== 0) return yearCompare;
+    const aRank = COUNCIL_ROLES.indexOf(a.role);
+    const bRank = COUNCIL_ROLES.indexOf(b.role);
+    const ai = aRank === -1 ? COUNCIL_ROLES.length : aRank;
+    const bi = bRank === -1 ? COUNCIL_ROLES.length : bRank;
+    if (ai !== bi) return ai - bi;
+    return String(a.name || "").localeCompare(String(b.name || ""));
+  });
 
   renderList("councilList", items, "No prefects added yet.", (item) => {
     const title = `${escapeHtml(item.name || "Unnamed")}${item.role === "Senior Prefect (Boy)" || item.role === "Senior Prefect (Girl)" ? " <span class='badge'>Main Role</span>" : ""}`;
