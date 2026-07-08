@@ -736,7 +736,7 @@ const latestCouncilYear = councilList[0] && councilList[0].academicYear;
     document.getElementById('pastPrincipalsGrid').innerHTML = principalsList.map(p => `
       <div class="card reveal in" style="padding:24px 20px; text-align:center;">
         ${p.photoUrl
-          ? `<img class="council-avatar" src="${p.photoUrl}" alt="${escapeHtml(p.name)}" style="margin:0 auto 12px;">`
+          ? `<img class="council-avatar" src="${p.photoUrl}" alt="${escapeHtml(p.name)}" loading="lazy" style="margin:0 auto 12px;">`
           : `<div class="council-avatar fallback" style="margin:0 auto 12px;">${initials(p.name)}</div>`}
         <div style="font-weight:600; color:var(--navy);">${escapeHtml(p.name)}</div>
         <div style="font-family:var(--font-mono); font-size:.78rem; color:var(--gold); margin-top:4px;">${escapeHtml(p.yearStarted || '?')} – ${p.isCurrent ? 'Till date' : escapeHtml(p.yearEnded || '?')}</div>
@@ -762,7 +762,7 @@ if (currentCouncil.length) {
       document.getElementById('councilGridContainer').innerHTML = others.map(d => `
         <div class="card council-card reveal in">
           ${d.photoUrl
-            ? `<img class="council-avatar" src="${d.photoUrl}" alt="${escapeHtml(d.name)}">`
+            ? `<img class="council-avatar" src="${d.photoUrl}" alt="${escapeHtml(d.name)}" loading="lazy">`
             : `<div class="council-avatar fallback">${initials(d.name)}</div>`}
           <span class="role-tag">${escapeHtml(d.role)}</span>
           <span class="person-name">${escapeHtml(d.name)}</span>
