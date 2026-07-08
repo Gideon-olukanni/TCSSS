@@ -597,7 +597,7 @@ getDocs(collection(db, 'clubs')).then(snap => {
   document.getElementById('clubGridContainer').innerHTML = items.map(c => `
     <div class="card club reveal in">
       ${escapeHtml(c.name)}
-      ${c.description ? `<div style="font-weight:400; font-size:.82rem; color:var(--slate); margin-top:6px;">${escapeHtml(c.description)}</div>` : ''}
+      ${c.desc ? `<div style="font-weight:400; font-size:.82rem; color:var(--slate); margin-top:6px;">${escapeHtml(c.desc)}</div>` : ''}
     </div>`).join('');
   document.getElementById('clubPlaceholderNote').style.display = 'none';
 }).catch(() => {});
