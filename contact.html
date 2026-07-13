@@ -324,9 +324,10 @@ footer ul a:hover{ color:#fff; }
             <dd>Alimosho</dd>
             <dt>Education District</dt>
             <dd>Alimosho District I</dd>
-            <dt>Email</dt>
-            <dt>Phone</dt>
-            <dd class="pending" id="contactEmailPhone">To be added by the school administration</dd>
+             <dt>Email</dt>
+<dd class="pending" id="contactEmail">To be added by the school administration</dd>
+<dt>Phone</dt>
+<dd class="pending" id="contactPhone">To be added by the school administration</dd>
             <dt>Social Media</dt>
             <dd class="pending" id="contactSocial">Pending — links added once confirmed</dd>
           </dl>
@@ -528,13 +529,22 @@ footer ul a:hover{ color:#fff; }
 // ============================================================
 import { db, doc, getDoc } from "./firebase-config.js";
 
+function escapeHtml(str) {
+  if (!str) return '';
+  return String(str).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+}
+
 getDoc(doc(db, 'contactInfo', 'main')).then(snap => {
   if (!snap.exists()) return;
   const d = snap.data();
-  if (d.email || d.phone) {
-    const parts = [d.email, d.phone].filter(Boolean);
-    const el = document.getElementById('contactEmailPhone');
-    el.textContent = parts.join(' · ');
+  if (d.email) {
+    const el = document.getElementById('contactEmail');
+    el.innerHTML = `<a href="mailto:${escapeHtml(d.email)}" style="color:#fff; text-decoration:underline;">${escapeHtml(d.email)}</a>`;
+    el.classList.remove('pending');
+  }
+  if (d.phone) {
+    const el = document.getElementById('contactPhone');
+    el.innerHTML = `<a href="tel:${escapeHtml(d.phone)}" style="color:#fff; text-decoration:underline;">${escapeHtml(d.phone)}</a>`;
     el.classList.remove('pending');
   }
   if (d.facebook || d.instagram) {
